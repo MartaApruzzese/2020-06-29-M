@@ -15,7 +15,11 @@ public class Model {
 	private Graph<Director, DefaultWeightedEdge> grafo;
 	private Map<Integer, Director> idMap;
 	private List<Director> vertici;
+	private List<Director> best;
+	private int totaleCondivisi;
 	
+
+	private int max;
 	
 	public Model() {
 		this.dao= new ImdbDAO();
@@ -75,5 +79,86 @@ public class Model {
 	
 	public int getNumArchi() {
 		return this.grafo.edgeSet().size();
+	}
+	
+	
+	/**
+	 * RISOLUZIONE DEL PUNTO 2: RICORSIONE
+	 */
+	
+	public List<Director> calcolaPercorso(int x, Director d){
+		this.best=new ArrayList<>();
+		this.max=x;
+		this.totaleCondivisi=0;
+		List<Director> parziale= new ArrayList<>();
+		parziale.add(d);
+		
+		cerca(parziale,0);
+		return best;
+	}
+
+	private void cerca(List<Director> parziale, int tot) {
+		//Condizione di uscita
+		/*if(calcolaSomma(parziale)>max) {
+			return;
+		}
+		
+		//ricorsività
+		for(Director d: Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
+			if(!parziale.contains(d)) {
+				parziale.add(d);
+				cerca(parziale);
+				parziale.remove(d);
+			}
+		}
+		
+		//Condizione di best
+		if(parziale.size()>best.size()) {
+			best= new ArrayList<>(parziale);
+			totaleCondivisi=calcolaSomma(parziale);
+		}*/
+		
+		
+		//RIFO
+		
+		//Ricorsione
+		for(Director d: Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
+			if(!parziale.contains(d)) {
+				tot=tot+(int)this.grafo.getEdgeWeight(this.grafo.getEdge(d,parziale.get(parziale.size()-1)));
+				parziale.add(d);
+				
+				if(tot<=this.max) { //condizione di terminazione
+					cerca(parziale,tot);
+					parziale.remove(d);
+				}else
+					return;
+				
+			}
+		}
+		
+		//Condizione migliore
+		if(parziale.size()>best.size()) {
+			best= new ArrayList<>(parziale);
+			totaleCondivisi=tot;
+		}
+		
+		
+	}
+
+	private int calcolaSomma(List<Director> parziale) {
+		//faccio la somma tra tutti i pesi degli archi
+		int sommaTot=0;
+		for(int i=parziale.size(); i<=1; i--) {
+			Director source= parziale.get(i);
+			Director target= parziale.get(i-1);
+			double peso= this.grafo.getEdgeWeight(this.grafo.getEdge(source, target));
+			sommaTot=sommaTot+(int)peso;
+			
+		}
+		return sommaTot;
+	}
+	
+	public int getTotaleCondivisi() {
+		return totaleCondivisi;
 	}
 }

@@ -5,6 +5,7 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -93,7 +94,27 @@ public class FXMLController {
 
     @FXML
     void doRicorsione(ActionEvent event) {
-
+    	int max;
+    	Director d;
+    	txtResult.clear();
+    	try {
+    		max= Integer.parseInt(txtAttoriCondivisi.getText());
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Inserire un valore numerico.");
+    		return;
+    	}
+    	try {
+    		d= boxRegista.getValue();
+    	}catch(NullPointerException e) {
+    		txtResult.setText("Selezionare un direttore!");
+    		return;
+    	}
+    	List<Director> result= new ArrayList<>();
+    	result.addAll(this.model.calcolaPercorso(max, d));
+    	txtResult.setText("Il percorso migliore trovato è composto da: "+ this.model.getTotaleCondivisi());
+    	for(Director reg :result ) {
+    		txtResult.appendText("\n"+reg.toString());
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
