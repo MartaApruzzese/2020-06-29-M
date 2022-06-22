@@ -35,7 +35,7 @@ public class FXMLController {
     private Button btnCercaAffini; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxRegista"
     private ComboBox<?> boxRegista; // Value injected by FXMLLoader
@@ -48,7 +48,20 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	int anno;
+    	
+    	try {
+    		anno=boxAnno.getValue();
+    	}catch(NullPointerException e) {
+    		txtResult.setText("Inserire un anno.");
+    		return;
+    	}
+    	
+    	this.model.creaGrafo(anno);
+    	txtResult.setText("Grafo Creato!");
+    	txtResult.appendText("\nIl numero di vertici del grafo è: "+this.model.getVertici().size());
+    	txtResult.appendText("\nIl numero di archi del grafo è: "+this.model.getNumArchi());
     }
 
     @FXML
@@ -76,7 +89,10 @@ public class FXMLController {
    public void setModel(Model model) {
     	
     	this.model = model;
-    	
+    	boxAnno.getItems().clear();
+    	boxAnno.getItems().add(2004);
+    	boxAnno.getItems().add(2005);
+    	boxAnno.getItems().add(2006);
     }
     
 }
