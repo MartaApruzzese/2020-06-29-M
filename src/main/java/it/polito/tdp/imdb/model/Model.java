@@ -48,6 +48,25 @@ public class Model {
 		
 	}
 	
+	public List<DirettoriAdiacenti> getRegistiAdiacenti(Director source){
+		//Creo una lista di adiacente dove c'e il direttore selezionato
+		List<DirettoriAdiacenti> result= new ArrayList<>();
+		for(Director d: Graphs.neighborListOf(this.grafo, source)){
+			result.add(new DirettoriAdiacenti(d, this.grafo.getEdgeWeight(this.grafo.getEdge(source, d))));
+		}
+		
+		Collections.sort(result, new Comparator<DirettoriAdiacenti>(){
+
+			@Override
+			public int compare(DirettoriAdiacenti o1, DirettoriAdiacenti o2) {
+				
+				return (int) (-1*( o1.getPeso()-o2.getPeso()));
+			}
+		});
+		return result;
+	}
+	
+	
 	
 	public List<Director> getVertici(){
 		return this.vertici;

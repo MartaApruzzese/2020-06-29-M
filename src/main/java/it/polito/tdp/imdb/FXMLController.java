@@ -5,8 +5,11 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Director;
+import it.polito.tdp.imdb.model.DirettoriAdiacenti;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,7 +41,7 @@ public class FXMLController {
     private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxRegista"
-    private ComboBox<?> boxRegista; // Value injected by FXMLLoader
+    private ComboBox<Director> boxRegista; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtAttoriCondivisi"
     private TextField txtAttoriCondivisi; // Value injected by FXMLLoader
@@ -62,11 +65,30 @@ public class FXMLController {
     	txtResult.setText("Grafo Creato!");
     	txtResult.appendText("\nIl numero di vertici del grafo è: "+this.model.getVertici().size());
     	txtResult.appendText("\nIl numero di archi del grafo è: "+this.model.getNumArchi());
+  
+    	boxRegista.getItems().clear();
+    	for(Director d: this.model.getVertici()) {
+    		boxRegista.getItems().add(d);
+    	}
+    
     }
 
     @FXML
     void doRegistiAdiacenti(ActionEvent event) {
-
+    	Director source;
+    	txtResult.clear();
+    	try {
+    		source= boxRegista.getValue();
+    	}catch(NullPointerException e) {
+    		txtResult.setText("Selezionare un direttore!");
+    		return;
+    	}
+    	
+    	txtResult.setText("La lista dei registi adiacenti a "+source.toString()+" è:\n");
+    	List<DirettoriAdiacenti> res= this.model.getRegistiAdiacenti(source);
+    	for(DirettoriAdiacenti a: res) {
+    		txtResult.appendText(a.getDirettore().toString()+".   Attori condivisi: "+a.getPeso()+"\n");
+    	}
     }
 
     @FXML
